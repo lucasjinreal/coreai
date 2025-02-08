@@ -1,0 +1,17 @@
+.idea/
+build/
+alfred_py.egg-info/
+alfred.egg-info/
+dist/
+build/
+.vscode/
+vendor/
+
+*.pyc
+a.py
+__pycache__/vendor/
+upload_tpi.sh
+__pycache__/
+*.egg-info/
+checkpoints/
+results/
