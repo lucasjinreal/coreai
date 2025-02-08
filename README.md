@@ -14,5 +14,5 @@ More information will added later.
 To use component in coreai, simple:
 
 ```powershell
-pip install -U coreai
+pip install -U coreai-all
 ```
