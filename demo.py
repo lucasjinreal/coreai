@@ -1,15 +1,17 @@
-from coreai.models.firered.fireredasr import load_fireredasr_aed_model
+from coreai.models.firered.fireredasr import FireRedAsr
+from audiotool.utils import normalize_audio_to_target
 
 
-model = load_fireredasr_aed_model()
+model = FireRedAsr.from_pretrained(model_dir="checkpoints/fireredasr-aed-l")
 
 batch_uttid = ["BAC009S0764W0121"]
-batch_wav_path = ["examples/wav/BAC009S0764W0121.wav"]
+batch_wav_path = ["data/877.75_879.87.wav"]
+a = normalize_audio_to_target(batch_wav_path[0])
 res = model.transcribe(
     batch_uttid,
-    batch_wav_path,
+    [a],
     {
-        "use_gpu": 1,
+        "use_gpu": 0,
         "beam_size": 3,
         "nbest": 1,
         "decode_max_len": 0,

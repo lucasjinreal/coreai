@@ -11,7 +11,7 @@ from loguru import logger
 
 class FireRedAsr:
     @classmethod
-    def from_pretrained(cls, asr_type, model_dir):
+    def from_pretrained(cls, asr_type="aed", model_dir="checkpoints/fireredasr-aed-l"):
         assert asr_type in ["aed", "llm"]
 
         cmvn_path = os.path.join(model_dir, "cmvn.ark")
@@ -21,6 +21,16 @@ class FireRedAsr:
             model_path = os.path.join(model_dir, "model.pth.tar")
             dict_path = os.path.join(model_dir, "dict.txt")
             spm_model = os.path.join(model_dir, "train_bpe1000.model")
+
+            if not os.path.exists(model_dir):
+                from huggingface_hub import snapshot_download
+
+                logger.info(
+                    f"download from FireRedTeam/FireRedASR-AED-L into: {model_dir} "
+                )
+                snapshot_download("FireRedTeam/FireRedASR-AED-L", local_dir=model_dir)
+                logger.info(f"model downloaded into: {model_dir}")
+
             model = load_fireredasr_aed_model(model_path)
             tokenizer = ChineseCharEnglishSpmTokenizer(dict_path, spm_model)
         elif asr_type == "llm":
@@ -113,13 +123,7 @@ class FireRedAsr:
             return results
 
 
-def load_fireredasr_aed_model(model_path="checkpoints/fireredasr-aed-l"):
-    if not os.path.exists(model_path):
-        from huggingface_hub import snapshot_download
-
-        logger.info(f"download from FireRedTeam/FireRedASR-AED-L into: {model_path} ")
-        snapshot_download("FireRedTeam/FireRedASR-AED-L", local_dir=model_path)
-        logger.info(f"model downloaded into: {model_path}")
+def load_fireredasr_aed_model(model_path):
     package = torch.load(model_path, map_location=lambda storage, loc: storage)
     logger.info("model args:", package["args"])
     model = FireRedAsrAed.from_args(package["args"])
