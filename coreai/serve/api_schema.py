@@ -7,11 +7,15 @@ from openai.types.moderation_create_response import ModerationCreateResponse
 
 
 class Categories(Categories):
-    model_config = ConfigDict(populate_by_name=True,)
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
 
 class CategoryScores(CategoryScores):
-    model_config = ConfigDict(populate_by_name=True,)
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
 
 class ModelPermission(BaseModel):
@@ -184,3 +188,12 @@ class CreateEmbeddingResponse(BaseModel):
 
     usage: Usage
     """The usage information for the request."""
+
+
+class CompletionUsage(BaseModel):
+    completion_tokens: int
+    """Number of tokens in the generated completion."""
+    prompt_tokens: int
+    """Number of tokens in the prompt."""
+    total_tokens: int
+    """Total number of tokens used in the request (prompt + completion)."""

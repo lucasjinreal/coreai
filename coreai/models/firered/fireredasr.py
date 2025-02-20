@@ -14,14 +14,7 @@ class FireRedAsr:
     def from_pretrained(cls, asr_type="aed", model_dir="checkpoints/fireredasr-aed-l"):
         assert asr_type in ["aed", "llm"]
 
-        cmvn_path = os.path.join(model_dir, "cmvn.ark")
-        feat_extractor = ASRFeatExtractor(cmvn_path)
-
         if asr_type == "aed":
-            model_path = os.path.join(model_dir, "model.pth.tar")
-            dict_path = os.path.join(model_dir, "dict.txt")
-            spm_model = os.path.join(model_dir, "train_bpe1000.model")
-
             if not os.path.exists(model_dir):
                 from huggingface_hub import snapshot_download
 
@@ -30,6 +23,14 @@ class FireRedAsr:
                 )
                 snapshot_download("FireRedTeam/FireRedASR-AED-L", local_dir=model_dir)
                 logger.info(f"model downloaded into: {model_dir}")
+
+        cmvn_path = os.path.join(model_dir, "cmvn.ark")
+        feat_extractor = ASRFeatExtractor(cmvn_path)
+
+        if asr_type == "aed":
+            model_path = os.path.join(model_dir, "model.pth.tar")
+            dict_path = os.path.join(model_dir, "dict.txt")
+            spm_model = os.path.join(model_dir, "train_bpe1000.model")
 
             model = load_fireredasr_aed_model(model_path)
             tokenizer = ChineseCharEnglishSpmTokenizer(dict_path, spm_model)
