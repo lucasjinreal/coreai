@@ -57,5 +57,8 @@ setup(
     author_email="jinfagang19@163.com",
     url="https://github.com/lucasjinreal/coreai",
     platforms="any",
-    install_requires=[],
+    install_requires=[
+        "torchao",
+        "torchtune"
+    ],
 )

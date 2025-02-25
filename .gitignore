@@ -17,4 +17,8 @@ checkpoints/
 results/
 .DS_store
 *normalized.wav
+data/reconstructed.wav
 
+
+vendor/
+data/reconstructed2.wav
