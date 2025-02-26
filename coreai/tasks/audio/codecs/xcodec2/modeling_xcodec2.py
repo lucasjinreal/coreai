@@ -19,8 +19,8 @@ class XCodec2Model(PreTrainedModel):
         # 1) 语义模型
         if not os.path.exists('checkpoints/w2v-bert-2.0'):
             from huggingface_hub import snapshot_download
-            print(f'downloading facebook/w2v-bert-2.0 into checkpoints/w2v-bert-2.0')
-            snapshot_download("facebook/w2v-bert-2.0", local_dir="checkpoints/w2v-bert-2.0")
+            print(f'downloading lucasjin/w2v-bert-2.0 into checkpoints/w2v-bert-2.0')
+            snapshot_download("lucasjin/w2v-bert-2.0", local_dir="checkpoints/w2v-bert-2.0")
         self.semantic_model = Wav2Vec2BertModel.from_pretrained(
             "checkpoints/w2v-bert-2.0",
             output_hidden_states=True
@@ -42,7 +42,7 @@ class XCodec2Model(PreTrainedModel):
         # 4) 两个全连接层
         self.fc_prior = nn.Linear(2048, 2048)
         self.fc_post_a = nn.Linear(2048, 1024)
-        feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/w2v-bert-2.0")
+        feature_extractor = AutoFeatureExtractor.from_pretrained("checkpoints/w2v-bert-2.0")
         self.feature_extractor = feature_extractor
 
     def forward(self, input_waveform, sample_rate=16000):
