@@ -59,6 +59,7 @@ setup(
     platforms="any",
     install_requires=[
         "torchao",
-        "torchtune"
+        "torchtune",
+        "vector_quantize_pytorch"
     ],
 )
