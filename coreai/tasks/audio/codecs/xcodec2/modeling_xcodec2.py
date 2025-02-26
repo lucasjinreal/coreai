@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from transformers import PreTrainedModel
@@ -16,8 +17,12 @@ class XCodec2Model(PreTrainedModel):
         super().__init__(config)
 
         # 1) 语义模型
+        if not os.path.exists('checkpoints/w2v-bert-2.0'):
+            from huggingface_hub import snapshot_download
+            print(f'downloading facebook/w2v-bert-2.0 into checkpoints/w2v-bert-2.0')
+            snapshot_download("facebook/w2v-bert-2.0", local_dir="checkpoints/w2v-bert-2.0")
         self.semantic_model = Wav2Vec2BertModel.from_pretrained(
-            "facebook/w2v-bert-2.0",
+            "checkpoints/w2v-bert-2.0",
             output_hidden_states=True
         )
         self.semantic_model.eval()
