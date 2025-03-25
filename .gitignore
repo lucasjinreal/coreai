@@ -22,3 +22,5 @@ data/reconstructed.wav
 
 vendor/
 data/reconstructed2.wav
+*.bin
+
