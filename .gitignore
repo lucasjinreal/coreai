@@ -26,3 +26,5 @@ data/reconstructed2.wav
 
 *.egg-info/
 build/
+checkpoints
+checkpoints/

@@ -6,7 +6,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-from coreai.utils.process_utils import replace_image_tokens
+from coreai.utils.process_utils import replace_image_tokens_to_qwenvl_default
 from qwen_vl_utils import process_vision_info, fetch_image
 
 try:
@@ -17,6 +17,7 @@ except ImportError as e:
     pass
 
 from loguru import logger
+import os
 from coreai.utils.symbols import (
     DEFAULT_IM_START_TOKEN,
     DEFAULT_IM_END_TOKEN,
@@ -26,6 +27,7 @@ from coreai.utils.symbols import (
     VISION_START_TOKEN,
     VISION_END_TOKEN,
 )
+import uuid
 
 
 class QwenVLvLLMInfer:
@@ -33,12 +35,13 @@ class QwenVLvLLMInfer:
         self,
         model_path: str = "Qwen/Qwen2.5-VL-7B-Instruct",
         tensor_parallel_size: int = 1,
-        max_model_len: int = 8192,
+        max_model_len: int = 4096,
         dtype: str = "bfloat16",
         limit_mm_per_prompt: int = 16,
         modality="image",
     ):
-
+        if not os.path.exists(model_path):
+            logger.error(f'{model_path} not found.')
         self.engine_args = AsyncEngineArgs(
             model=model_path,
             tensor_parallel_size=tensor_parallel_size,
@@ -47,7 +50,6 @@ class QwenVLvLLMInfer:
             enforce_eager=True,  # 避免图编译问题
             disable_log_requests=True,
             trust_remote_code=True,
-            max_model_len=4096,
             max_num_seqs=5,
             mm_processor_kwargs={
                 "min_pixels": 28 * 28,
@@ -72,7 +74,7 @@ class QwenVLvLLMInfer:
 
         # convert <image> image tokens to QwenVL's
         # TODO: handle if video inputs
-        prompt = replace_image_tokens(prompt)
+        prompt = replace_image_tokens_to_qwenvl_default(prompt)
         system_message = (
             f"{DEFAULT_IM_START_TOKEN}system\n{system}{DEFAULT_IM_END_TOKEN}\n"
         )
@@ -82,7 +84,7 @@ class QwenVLvLLMInfer:
 
         return user_input
 
-    def generate_single_turn(
+    async def generate_single_turn(
         self,
         prompt,
         images,
@@ -108,21 +110,27 @@ class QwenVLvLLMInfer:
                 prompt, images, system_msg
             )
         else:
+            logger.error(f'{prompt} seems doesnt contains {image_special_token} but images were not empty.')
             raise NotImplementedError
-
+        
+        if verbose:
+            print(f'prompt_templated {prompt_templated}')
+            
         images_smart_resized = [
             fetch_image({"image": i, **self.engine_args.mm_processor_kwargs})
             for i in images
         ]
-        outputs = self.engine.generate(
+        outputs_generator = self.engine.generate(
             {
                 "prompt": prompt_templated,
                 "multi_modal_data": {"image": images_smart_resized},
-            }
+            },
+            self.sampling_params,
+            str(uuid.uuid4()) 
         )
-
-        for o in outputs:
+        generated_text = ""
+        async for o in outputs_generator:
             generated_text = o.outputs[0].text
-            if verbose:
-                print(generated_text)
+            # if verbose:
+            #     print(generated_text)
         return generated_text
