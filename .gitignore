@@ -24,3 +24,5 @@ vendor/
 data/reconstructed2.wav
 *.bin
 
+*.egg-info/
+build/
