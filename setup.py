@@ -60,6 +60,7 @@ setup(
     install_requires=[
         "torchao",
         "torchtune",
-        "vector_quantize_pytorch"
+        "vector_quantize_pytorch",
+        "natsort"
     ],
 )
