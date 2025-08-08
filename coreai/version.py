@@ -3,7 +3,7 @@ from datetime import datetime
 
 major_num = 2
 
-__version__ = "0.0.13"
+__version__ = "0.1.0"
 short_version = __version__
 
 

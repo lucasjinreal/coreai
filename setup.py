@@ -12,9 +12,10 @@ version_file = "coreai/version.py"
 
 
 def get_version():
+    context = {}
     with open(version_file, "r") as f:
-        exec(compile(f.read(), version_file, "exec"))
-    return locals()["__version__"]
+        exec(f.read(), context)
+    return context["__version__"]
 
 
 setup(
