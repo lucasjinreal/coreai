@@ -1,0 +1,1 @@
+vllm serve models/MiniCPM-V-2_5 --dtype auto --tensor-parallel-size 1
