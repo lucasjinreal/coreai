@@ -19,7 +19,7 @@ def get_version():
 
 
 setup(
-    name="coreai-all",
+    name="coreai-tools",
     version=get_version(),
     keywords=["deep learning", "script helper", "tools", "coreai"],
     description="CoreAI",
